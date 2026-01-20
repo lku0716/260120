@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 # 1. 페이지 설정
-st.set_config(
+st.set_page_config(
     page_title="예수중심교회",
     page_icon="⛪",
     layout="wide"
