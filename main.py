@@ -1,89 +1,111 @@
 import streamlit as st
+from streamlit_option_menu import option_menu
 
-# 1. 페이지 설정 (가장 먼저 호출되어야 함)
-st.set_page_config(
-    page_title="✨ MBTI 진로 탐색 가이드",
-    page_icon="🌟",
-    layout="centered"
+# 1. 페이지 설정
+st.set_config(
+    page_title="예수중심교회",
+    page_icon="⛪",
+    layout="wide"
 )
 
-# 2. 커스텀 CSS로 배경색 및 디자인 업그레이드
+# 2. 커스텀 CSS (모던 & 화려한 스타일)
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;400;700&display=swap');
+    html, body, [class*="css"] {
+        font-family: 'Noto Sans KR', sans-serif;
+    }
     .main {
-        background-color: #f0f2f6;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
-    .stButton>button {
-        width: 100%;
-        border-radius: 20px;
-        height: 3em;
-        background-color: #FF4B4B;
-        color: white;
-        font-weight: bold;
+    .stApp {
+        color: #2C3E50;
     }
-    .stSelectbox {
-        color: #1E1E1E;
-    }
-    h1 {
-        color: #2E4053;
+    .hero-text {
         text-align: center;
+        padding: 50px;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. 헤더 섹션
-st.title("🌈 MBTI로 찾는 나의 '꿈' & '은사' 🕊️")
-st.subheader("여러분의 성격 유형에 어울리는 직업을 추천해 드립니다!")
-st.write("---")
+# 3. 사이드바 내비게이션 (모던한 메뉴)
+with st.sidebar:
+    st.image("https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=300", caption="오직 예수 🕊️")
+    selected = option_menu(
+        "Menu", ["홈 (Home)", "교회소개", "예배안내", "청년부(팀)"],
+        icons=['house', 'info-circle', 'clock', 'people'],
+        menu_icon="cast", default_index=0,
+        styles={
+            "container": {"padding": "5px!", "background-color": "#fafafa"},
+            "icon": {"color": "orange", "font-size": "20px"}, 
+            "nav-link": {"font-size": "16px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
+            "nav-link-selected": {"background-color": "#2C3E50"},
+        }
+    )
 
-# 4. 데이터 정의 (MBTI별 추천 직업 & 설명)
-mbti_data = {
-    "ISTJ": {"job": "회계사, 공무원, 사서, 법률 전문가", "desc": "신중하고 철저하며 책임감이 강합니다. 📋"},
-    "ISFJ": {"job": "간호사, 사회복지사, 초등교사, 상담가", "desc": "조용하고 다정하며 봉사 정신이 투철합니다. ❤️"},
-    "INFJ": {"job": "상담사, 작가, 종교 지도자, 심리학자", "desc": "이상주의적이며 통찰력이 뛰어납니다. ✨"},
-    "INTJ": {"job": "전략가, 데이터 과학자, 교수, 시스템 분석가", "desc": "논리적이고 독립적이며 분석적입니다. 🧠"},
-    "ISTP": {"job": "엔지니어, 파일럿, 경찰관, 데이터 분석가", "desc": "상황 적응력이 빠르고 도구 활용 능력이 좋습니다. 🔧"},
-    "ISFP": {"job": "예술가, 디자이너, 요리사, 작곡가", "desc": "온화하고 감각적이며 예술적 기질이 풍부합니다. 🎨"},
-    "INFP": {"job": "작가, 예술가, 상담가, NGO 활동가", "desc": "신념이 강하고 이해심이 많으며 창의적입니다. 🦋"},
-    "INTP": {"job": "연구원, 프로그래머, 철학자, 수학자", "desc": "호기심이 많고 비판적 사고에 능합니다. 🔭"},
-    "ESTP": {"job": "마케터, 소방관, 운동선수, 기업가", "desc": "활동적이고 직설적이며 문제 해결 능력이 좋습니다. ⚡"},
-    "ESFP": {"job": "연예인, 여행 가이드, 홍보 전문가, 이벤트 플래너", "desc": "사교적이며 밝고 에너지가 넘칩니다. 🎉"},
-    "ENFP": {"job": "크리에이터, 홍보 전문가, 심리치료사, 교육자", "desc": "상상력이 풍부하고 열정적이며 사람을 좋아합니다. 🎈"},
-    "ENTP": {"job": "발명가, 변호사, 기획자, 정치인", "desc": "지적 도전 정신이 강하고 아이디어가 넘칩니다. 💡"},
-    "ESTJ": {"job": "경영자, 관리자, 군 장교, 경제학자", "desc": "체계적이고 리더십이 있으며 실질적입니다. 👔"},
-    "ESFJ": {"job": "호텔리어, 승무원, 영업 사원, 홍보 담당", "desc": "친절하고 협력적이며 타인의 필요를 잘 읽습니다. 🤝"},
-    "ENFJ": {"job": "교사, 상담사, 정치가, 시민 운동가", "desc": "타인의 성장을 돕고 리더십이 뛰어납니다. 📢"},
-    "ENTJ": {"job": "CEO, 경영 컨설턴트, 정치 지도자, 변호사", "desc": "결단력 있고 통솔력이 있으며 목표 지향적입니다. 👑"}
-}
-
-# 5. 사용자 입력 섹션
-with st.container():
-    col1, col2 = st.columns([1, 1])
+# 4. 페이지별 콘텐츠
+if selected == "홈 (Home)":
+    st.markdown("""
+        <div class="hero-text">
+            <h1 style='font-size: 3rem; color: #1A5276;'>🕆 예수중심교회</h1>
+            <p style='font-size: 1.2rem;'>하나님의 말씀이 삶의 중심이 되는 공동체</p>
+        </div>
+    """, unsafe_allow_html=True)
     
+    st.write("##")
+    
+    col1, col2 = st.columns(2)
     with col1:
-        st.info("💡 본인의 MBTI를 선택해 보세요!")
-        selected_mbti = st.selectbox(
-            "MBTI 선택하기",
-            options=list(mbti_data.keys()),
-            index=0
-        )
-
+        st.info("### ✨ 오늘의 말씀")
+        # 개역한글 번역본 적용
+        st.write("*" + "태초에 하나님이 천지를 창조하시니라" + "*")
+        st.caption("(창세기 1:1)")
+    
     with col2:
-        st.write("###") # 간격 조절
-        if st.button("추천 직업 확인하기! 🔍"):
-            st.balloons() # 축하 효과!
-            
-            # 결과 표시
-            result = mbti_data[selected_mbti]
-            st.success(f"### {selected_mbti} 유형의 특징")
-            st.write(f"**{result['desc']}**")
-            
-            st.warning("### 🎯 추천 직업군")
-            st.write(f"**{result['job']}**")
+        st.success("### 📢 공지사항")
+        st.write("✔️ 이번 주 성경 공부 모임 안내")
+        st.write("✔️ 새가족 환영회 (주일 오후 2시)")
 
-# 6. 마무리 멘트 (신학생 사용자를 위한 배려)
-st.write("---")
-st.markdown("""
-    > "각각 그 재능대로..." (마태복음 25:15)  
-    > 이 결과는 참고용일 뿐, 여러분의 가장 큰 은사는 하나님과의 관계 속에서 더 밝게 빛날 것입니다. ✨
-""")
+elif selected == "교회소개":
+    st.title("📖 교회 소개")
+    st.markdown("---")
+    st.write("#### 🔹 믿음의 고백")
+    st.write("우리 예수중심교회는 **개혁주의 신학**에 기초하여 성경의 권위를 인정하며, 하나님 중심, 성경 중심, 교회 중심의 삶을 지향합니다.")
+    st.image("https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&q=80&w=800", use_column_width=True)
+
+elif selected == "예배안내":
+    st.title("⏰ 예배 및 집회 안내")
+    st.markdown("---")
+    
+    data = {
+        "구분": ["주일 대예배", "청년부 예배", "수요 기도회", "새벽 기도회"],
+        "시간": ["오전 11:00", "오후 02:00", "오후 07:30", "오전 05:30"],
+        "장소": ["본당 2층", "소예배실", "본당 1층", "온라인/본당"]
+    }
+    st.table(data)
+
+elif selected == "청년부(팀)":
+    st.title("👥 청년부 공동체")
+    st.write("현재 **15명의 소중한 팀원**들이 함께 모여 삶과 신앙을 나누고 있습니다.")
+    
+    # 팀 리더(사용자) 섹션
+    st.markdown("""
+        <div style="background-color: #EBF5FB; padding: 20px; border-left: 5px solid #2E86C1; border-radius: 10px;">
+            <h4 style="margin:0;">🎖️ 팀장 메시지</h4>
+            <p>"우리가 알거니와 하나님을 사랑하는 자 곧 그 뜻대로 부르심을 입은 자들에게는 모든 것이 합력하여 선을 이루느니라" (로마서 8:28)</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.write("##")
+    st.subheader("📸 활동 갤러리")
+    col1, col2, col3 = st.columns(3)
+    col1.image("https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&q=80&w=200")
+    col2.image("https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=200")
+    col3.image("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=200")
+
+# 5. 푸터
+st.divider()
+st.center = st.markdown("<p style='text-align: center; color: gray;'>© 2024 예수중심교회 | Reformed Theology</p>", unsafe_allow_html=True)
