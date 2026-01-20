@@ -51,7 +51,7 @@ with st.sidebar:
 if selected == "홈 (Home)":
     st.markdown("""
         <div class="hero-text">
-            <h1 style='font-size: 3rem; color: #1A5276;'>🕆 예수중심교회</h1>
+            <h1 style='font-size: 3rem; color: #1A5276;'>예수중심교회</h1>
             <p style='font-size: 1.2rem;'>하나님의 말씀이 삶의 중심이 되는 공동체</p>
         </div>
     """, unsafe_allow_html=True)
