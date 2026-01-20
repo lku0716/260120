@@ -1,3 +1,4 @@
+
 import streamlit as st
 from streamlit_option_menu import option_menu
 
@@ -108,4 +109,4 @@ elif selected == "청년부(팀)":
 
 # 5. 푸터
 st.divider()
-st.center = st.markdown("<p style='text-align: center; color: gray;'>© 2024 예수중심교회 | Reformed Theology</p>", unsafe_allow_html=True)
+st.center = st.markdown("<p style='text-align: center; color: gray;'>© 2026 예수중심교회 | God is always with you :) </p>", unsafe_allow_html=True)
