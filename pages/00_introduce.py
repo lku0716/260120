@@ -1,58 +1,73 @@
-# app.py
+# pages/00_introduce.py
 import streamlit as st
+from pathlib import Path
 
-st.set_page_config(
-    page_title="자기소개",
-    page_icon="👋",
-    layout="centered"
+st.set_page_config(page_title="자기소개", page_icon="👋", layout="centered")
+
+st.sidebar.title("⚙️ 설정")
+photo_source = st.sidebar.radio(
+    "사진 가져오기",
+    ["업로드", "이미지 URL", "로컬 파일(Repo에 포함된 파일)"],
+    index=0
 )
 
-# ====== 사이드바 ======
-st.sidebar.title("⚙️ 설정")
-photo_source = st.sidebar.radio("사진 가져오기", ["로컬 이미지 사용", "이미지 URL 사용"])
+img = None  # st.image에 넣을 대상
 
-# 로컬 이미지를 쓸 경우: 같은 폴더에 profile.jpg 를 두세요.
-# URL을 쓸 경우: 아래 입력칸에 이미지 링크를 넣으세요.
-img = None
-if photo_source == "로컬 이미지 사용":
-    img_path = st.sidebar.text_input("로컬 이미지 파일명", value="profile.jpg")
-    try:
-        img = img_path
-    except:
-        img = None
-else:
+if photo_source == "업로드":
+    uploaded = st.sidebar.file_uploader(
+        "프로필 사진 업로드",
+        type=["png", "jpg", "jpeg", "webp"]
+    )
+    if uploaded is not None:
+        img = uploaded
+
+elif photo_source == "이미지 URL":
     img_url = st.sidebar.text_input(
         "이미지 URL",
         value="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=900"
     )
-    img = img_url
+    # URL은 문자열 그대로 st.image에 넣어도 OK
+    if img_url.strip():
+        img = img_url.strip()
+
+else:  # 로컬 파일
+    # Streamlit Cloud에서 쓰려면 repo에 실제로 파일이 있어야 함
+    # 예: assets/profile.jpg 를 repo에 넣고 아래처럼 지정
+    img_path_str = st.sidebar.text_input("로컬 이미지 경로", value="assets/profile.jpg")
+    img_path = Path(img_path_str)
+    if img_path.exists() and img_path.is_file():
+        img = str(img_path)
+    else:
+        st.sidebar.warning(f"로컬 파일을 찾을 수 없어요: {img_path_str}")
 
 name = st.sidebar.text_input("이름", value="이경업")
-one_liner = st.sidebar.text_input("한 줄 소개", value="신학생으로서 말씀과 공동체를 사랑합니다.")
+one_liner = st.sidebar.text_input("한 줄 소개", value="말씀과 공동체를 사랑하는 신학생입니다.")
 greeting = st.sidebar.text_area("인사말", value="안녕하세요! 만나서 반갑습니다 👋")
 
-# ====== 메인 ======
 st.title("👋 자기소개 웹 앱")
 st.caption("Streamlit로 만든 간단한 소개 페이지")
 
 col1, col2 = st.columns([1, 2], vertical_alignment="center")
 
 with col1:
-    # 이미지 표시
-    st.image(img, caption="My Photo", use_container_width=True)
+    if img is not None:
+        st.image(img, caption="My Photo", use_container_width=True)
+    else:
+        # 이미지가 없으면 기본 표시 (절대 안 터짐)
+        st.info("📷 사진이 아직 없어요. 왼쪽에서 업로드하거나 URL을 넣어주세요!")
+        st.image("https://placehold.co/600x600/png?text=Your+Photo", use_container_width=True)
 
 with col2:
-    st.header(f"{name}")
+    st.header(name)
     st.write(f"**{one_liner}**")
     st.write(greeting)
 
 st.divider()
 
-# 소개 섹션들
 st.subheader("🧾 About")
 st.write(
-    "저는 사람들을 세우고, 말씀을 더 잘 이해하고 전하기 위해 배우는 중입니다. "
-    "작은 습관과 꾸준한 훈련이 큰 변화를 만든다고 믿어요."
+    "저는 말씀을 더 잘 이해하고 전하기 위해 배우는 중입니다. "
+    "꾸준함이 결국 사람을 만든다고 믿어요."
 )
 
 st.subheader("🧰 Skills / Interests")
@@ -66,18 +81,9 @@ st.success(f"✅ 이번 주 목표: {focus}")
 
 st.divider()
 
-# 연락처
 st.subheader("📮 Contact")
-st.write("원하시면 아래에 연락처를 추가해 꾸밀 수 있어요.")
 email = st.text_input("Email", value="your_email@example.com")
 insta = st.text_input("Instagram", value="@your_id")
+st.markdown(f"**Email:** {email}\n\n**Instagram:** {insta}")
 
-st.markdown(
-    f"""
-**Email:** {email}  
-**Instagram:** {insta}
-"""
-)
-
-# 푸터
 st.caption("Made with Streamlit ✨")
