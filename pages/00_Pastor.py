@@ -44,7 +44,7 @@ name = st.sidebar.text_input("이름", value="이경업")
 one_liner = st.sidebar.text_input("한 줄 소개", value="말씀과 공동체를 사랑하는 신학생입니다.")
 greeting = st.sidebar.text_area("인사말", value="안녕하세요! 만나서 반갑습니다 👋")
 
-st.title("👋 자기소개 웹 앱")
+st.title("👋 담임목사 프로필")
 st.caption("Streamlit로 만든 간단한 소개 페이지")
 
 col1, col2 = st.columns([1, 2], vertical_alignment="center")
